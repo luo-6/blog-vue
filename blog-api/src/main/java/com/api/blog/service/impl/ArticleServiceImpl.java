@@ -1,5 +1,6 @@
 package com.api.blog.service.impl;
 
+import com.api.blog.dao.dos.Archives;
 import com.api.blog.dao.mapper.ArticleMapper;
 import com.api.blog.dao.pojo.Article;
 import com.api.blog.service.ArticleService;
@@ -63,6 +64,16 @@ public class ArticleServiceImpl implements ArticleService {
         queryWrapper.last("limit "+limit);
         List<Article> articles = articleMapper.selectList(queryWrapper);
         return Result.success(copyList(articles,false,false));
+    }
+
+    /**
+     * 文章归档
+     * @return
+     */
+    @Override
+    public Result listArchives() {
+        List<Archives> archivesList = articleMapper.listArchives();
+        return Result.success(archivesList);
     }
 
     private List<ArticleVo> copyList(List<Article> records,boolean isTag,boolean isAuthor) {
