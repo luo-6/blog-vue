@@ -46,8 +46,19 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public Result hotArticle(int limit) {
         LambdaQueryWrapper<Article> queryWrapper = new LambdaQueryWrapper<>();
-//        //是否置顶
+        //是否置顶
         queryWrapper.orderByDesc(Article::getViewCounts);
+        queryWrapper.select(Article::getId,Article::getTitle);
+        queryWrapper.last("limit "+limit);
+        List<Article> articles = articleMapper.selectList(queryWrapper);
+        return Result.success(copyList(articles,false,false));
+    }
+
+    @Override
+    public Result newArticles(int limit) {
+        LambdaQueryWrapper<Article> queryWrapper = new LambdaQueryWrapper<>();
+//        //是否置顶
+        queryWrapper.orderByDesc(Article::getCreateDate);
         queryWrapper.select(Article::getId,Article::getTitle);
         queryWrapper.last("limit "+limit);
         List<Article> articles = articleMapper.selectList(queryWrapper);
