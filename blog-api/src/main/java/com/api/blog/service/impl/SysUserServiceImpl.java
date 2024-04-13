@@ -17,11 +17,12 @@ public class SysUserServiceImpl implements SysUserService {
     @Autowired
     private SysUserMapper sysUserMapper;
     @Autowired
-    private LoginService longinService ;
+    private LoginService longinService;
+
     @Override
     public SysUser findUserById(Long id) {
         SysUser sysUser = sysUserMapper.selectById(id);
-        if (sysUser == null){
+        if (sysUser == null) {
             sysUser = new SysUser();
             sysUser.setNickname("星博客");
         }
@@ -31,9 +32,9 @@ public class SysUserServiceImpl implements SysUserService {
     @Override
     public SysUser findUser(String account, String password) {
         LambdaQueryWrapper<SysUser> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(SysUser::getAccount,account);
-        queryWrapper.eq(SysUser::getPassword,account);
-        queryWrapper.select(SysUser::getAccount,SysUser::getId,SysUser::getAvatar,SysUser::getNickname);
+        queryWrapper.eq(SysUser::getAccount, account);
+        queryWrapper.eq(SysUser::getPassword, account);
+        queryWrapper.select(SysUser::getAccount, SysUser::getId, SysUser::getAvatar, SysUser::getNickname);
         queryWrapper.last("limit 1");
         return sysUserMapper.selectOne(queryWrapper);
     }
@@ -43,13 +44,14 @@ public class SysUserServiceImpl implements SysUserService {
      * 是否为空，redis是否存在
      * 2.如果校验失败，返回错误
      * 3.如果成功，返回loginuservo
+     *
      * @param token
      * @return
      */
     @Override
     public Result findUserByToken(String token) {
         SysUser sysUser = longinService.checkToken(token);
-        if (sysUser == null){
+        if (sysUser == null) {
             return Result.fail(ErrorCode.TOKEN_ERROR.getCode(), ErrorCode.ACCOUNT_PWD_NOT_EXIST.getMsg());
         }
         LoginUserVo loginUserVo = new LoginUserVo();
@@ -58,5 +60,26 @@ public class SysUserServiceImpl implements SysUserService {
         loginUserVo.setAvatar(sysUser.getAvatar());
         loginUserVo.setAccount(sysUser.getAccount());
         return Result.success(loginUserVo);
+    }
+
+    /**
+     * 根据账户查找用户
+     *
+     * @param account
+     * @return
+     */
+    @Override
+    public SysUser findUserByAccount(String account) {
+        LambdaQueryWrapper<SysUser> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(SysUser::getAccount, account);
+        queryWrapper.last("limit 1");
+        return this.sysUserMapper.selectOne(queryWrapper);
+    }
+
+    @Override
+    public void save(SysUser sysUser) {
+        //保存用户，id会自动生成
+        //这个地方默认生成id 是分布式id 雪花算法
+        //mybatis plus
     }
 }
