@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class JWTUtils {
 
-    private static final String jwtToken = "123456Xbk!@###$$";
+    private static final String jwtToken = "123456Mszlu!@###$$";
 
     public static String createToken(Long userId){
         Map<String,Object> claims = new HashMap<>();

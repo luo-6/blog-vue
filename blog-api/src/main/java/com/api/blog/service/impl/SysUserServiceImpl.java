@@ -2,7 +2,13 @@ package com.api.blog.service.impl;
 
 import com.api.blog.dao.mapper.SysUserMapper;
 import com.api.blog.dao.pojo.SysUser;
+import com.api.blog.service.LoginService;
 import com.api.blog.service.SysUserService;
+import com.api.blog.vo.ErrorCode;
+import com.api.blog.vo.LoginUserVo;
+import com.api.blog.vo.Result;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +16,8 @@ import org.springframework.stereotype.Service;
 public class SysUserServiceImpl implements SysUserService {
     @Autowired
     private SysUserMapper sysUserMapper;
+    @Autowired
+    private LoginService longinService ;
     @Override
     public SysUser findUserById(Long id) {
         SysUser sysUser = sysUserMapper.selectById(id);
@@ -18,5 +26,37 @@ public class SysUserServiceImpl implements SysUserService {
             sysUser.setNickname("星博客");
         }
         return sysUserMapper.selectById(id);
+    }
+
+    @Override
+    public SysUser findUser(String account, String password) {
+        LambdaQueryWrapper<SysUser> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(SysUser::getAccount,account);
+        queryWrapper.eq(SysUser::getPassword,account);
+        queryWrapper.select(SysUser::getAccount,SysUser::getId,SysUser::getAvatar,SysUser::getNickname);
+        queryWrapper.last("limit 1");
+        return sysUserMapper.selectOne(queryWrapper);
+    }
+
+    /**
+     * 1.token合法性校验
+     * 是否为空，redis是否存在
+     * 2.如果校验失败，返回错误
+     * 3.如果成功，返回loginuservo
+     * @param token
+     * @return
+     */
+    @Override
+    public Result findUserByToken(String token) {
+        SysUser sysUser = longinService.checkToken(token);
+        if (sysUser == null){
+            return Result.fail(ErrorCode.TOKEN_ERROR.getCode(), ErrorCode.ACCOUNT_PWD_NOT_EXIST.getMsg());
+        }
+        LoginUserVo loginUserVo = new LoginUserVo();
+        loginUserVo.setId(sysUser.getId());
+        loginUserVo.setNickname(sysUser.getNickname());
+        loginUserVo.setAvatar(sysUser.getAvatar());
+        loginUserVo.setAccount(sysUser.getAccount());
+        return Result.success(loginUserVo);
     }
 }
