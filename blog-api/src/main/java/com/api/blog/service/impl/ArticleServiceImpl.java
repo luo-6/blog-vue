@@ -4,10 +4,7 @@ import com.api.blog.dao.dos.Archives;
 import com.api.blog.dao.mapper.ArticleBodyMapper;
 import com.api.blog.dao.mapper.ArticleMapper;
 import com.api.blog.dao.pojo.Article;
-import com.api.blog.service.ArticleService;
-import com.api.blog.service.CategoryService;
-import com.api.blog.service.SysUserService;
-import com.api.blog.service.TagService;
+import com.api.blog.service.*;
 import com.api.blog.vo.*;
 import com.api.blog.vo.param.PageParams;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -35,6 +32,8 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Autowired
     private CategoryService categoryService;
+    @Autowired
+    private ThreadService threadService;
     @Override
     public Result listArticle(PageParams pageParams) {
         /**
@@ -91,6 +90,11 @@ public class ArticleServiceImpl implements ArticleService {
          */
         Article article = this.articleMapper.selectById(articleId);
         ArticleVo articleVo = copy(article, true, true,true,true);
+        //查看完文章，新增阅读数
+        //查看完文章之后，本应该直接返回数据，这时候做了一个更新操作，更新时加锁，阻塞其他读操作，性能就会较低
+        //更新 增加了这次接口的 耗时 如果一旦更新出后果，不能影响查看文章的操作
+        //线程池 可以把更新操作扔到线程池，这样就和主线程不相关了
+        threadService.updateArticleViewCount(articleMapper,article);
         return Result.success(articleVo);
     }
 
