@@ -7,8 +7,10 @@ import com.api.blog.service.SysUserService;
 import com.api.blog.vo.ErrorCode;
 import com.api.blog.vo.LoginUserVo;
 import com.api.blog.vo.Result;
+import com.api.blog.vo.UserVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +30,19 @@ public class SysUserServiceImpl implements SysUserService {
         }
         return sysUserMapper.selectById(id);
     }
-
+    @Override
+    public UserVo findUserVoById(Long id) {
+        SysUser sysUser = sysUserMapper.selectById(id);
+        if (sysUser == null) {
+            sysUser = new SysUser();
+            sysUser.setId(1L);
+            sysUser.setAvatar("/static/img/logo.b3a48c0.png");
+            sysUser.setNickname("星博客");
+        }
+        UserVo userVo = new UserVo();
+        BeanUtils.copyProperties(sysUser,userVo);
+        return userVo;
+    }
     @Override
     public SysUser findUser(String account, String password) {
         LambdaQueryWrapper<SysUser> queryWrapper = new LambdaQueryWrapper<>();

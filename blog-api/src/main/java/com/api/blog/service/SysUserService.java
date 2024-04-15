@@ -2,8 +2,10 @@ package com.api.blog.service;
 
 import com.api.blog.dao.pojo.SysUser;
 import com.api.blog.vo.Result;
+import com.api.blog.vo.UserVo;
 
 public interface SysUserService {
+    UserVo findUserVoById(Long id);
     SysUser findUserById(Long id);
 
     SysUser findUser(String account,String password);

@@ -58,6 +58,7 @@ public class ArticleServiceImpl implements ArticleService {
         queryWrapper.select(Article::getId,Article::getTitle);
         queryWrapper.last("limit "+limit);
         List<Article> articles = articleMapper.selectList(queryWrapper);
+        log.error("articles_hot:{}",articles);
         return Result.success(copyList(articles,false,false));
     }
 
@@ -69,6 +70,7 @@ public class ArticleServiceImpl implements ArticleService {
         queryWrapper.select(Article::getId,Article::getTitle);
         queryWrapper.last("limit "+limit);
         List<Article> articles = articleMapper.selectList(queryWrapper);
+        log.error("articles_new :{}",articles);
         return Result.success(copyList(articles,false,false));
     }
 
