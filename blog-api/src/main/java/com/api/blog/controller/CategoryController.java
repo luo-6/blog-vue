@@ -1,6 +1,6 @@
 package com.api.blog.controller;
 
-import com.api.blog.service.TagService;
+import com.api.blog.service.CategoryService;
 import com.api.blog.vo.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,17 +8,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/tags")
-public class TagsController {
+@RequestMapping("/categorys")
+public class CategoryController {
     @Autowired
-    private TagService tagService;
-    @GetMapping("/hot")
-    public Result hot(){
-        int limit = 6;
-        return tagService.hots(limit);
-    }
+    private CategoryService categoryService;
     @GetMapping
-    public Result tags(){
-       return tagService.findAll();
+    public Result categorys(){
+        return categoryService.findAll();
     }
 }

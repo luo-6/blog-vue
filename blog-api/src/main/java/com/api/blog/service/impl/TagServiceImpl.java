@@ -5,6 +5,7 @@ import com.api.blog.dao.pojo.Tag;
 import com.api.blog.service.TagService;
 import com.api.blog.vo.Result;
 import com.api.blog.vo.TagVo;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,8 +19,11 @@ import java.util.List;
 public class TagServiceImpl implements TagService {
     @Autowired
     private TagMapper tagMapper;
+    private Long articleId;
+
     @Override
     public List<TagVo> findTagsByArticleId(Long articleId) {
+        this.articleId = articleId;
         //mybatis plus无法进行多表查询
         List<Tag> tags = tagMapper.findTagsByArticleId(articleId);
         return copyList(tags);
@@ -38,6 +42,12 @@ public class TagServiceImpl implements TagService {
         //需求tagsid和tagsname
         List<Tag> tags = tagMapper.findTagsByTagsIds(tagIds);
         return Result.success(tags);
+    }
+
+    @Override
+    public Result findAll() {
+        List<Tag> tags = this.tagMapper.selectList(new LambdaQueryWrapper<>());
+        return Result.success(copyList(tags));
     }
 
     public TagVo copy(Tag tag){
