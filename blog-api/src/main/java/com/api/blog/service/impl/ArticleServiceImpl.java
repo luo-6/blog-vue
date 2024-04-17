@@ -3,9 +3,13 @@ package com.api.blog.service.impl;
 import com.api.blog.dao.dos.Archives;
 import com.api.blog.dao.mapper.ArticleBodyMapper;
 import com.api.blog.dao.mapper.ArticleMapper;
+import com.api.blog.dao.mapper.ArticleTagMapper;
 import com.api.blog.dao.pojo.Article;
+import com.api.blog.dao.pojo.SysUser;
 import com.api.blog.service.*;
+import com.api.blog.utils.UserThreadLocal;
 import com.api.blog.vo.*;
+import com.api.blog.vo.param.ArticleParam;
 import com.api.blog.vo.param.PageParams;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -17,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 @Service
 @Slf4j
@@ -34,6 +39,8 @@ public class ArticleServiceImpl implements ArticleService {
     private CategoryService categoryService;
     @Autowired
     private ThreadService threadService;
+    @Autowired
+    private ArticleTagMapper articleTagMapper;
     @Override
     public Result listArticle(PageParams pageParams) {
         /**
@@ -98,6 +105,51 @@ public class ArticleServiceImpl implements ArticleService {
         //线程池 可以把更新操作扔到线程池，这样就和主线程不相关了
         threadService.updateArticleViewCount(articleMapper,article);
         return Result.success(articleVo);
+    }
+
+    @Override
+    public Result publish(ArticleParam articleParam) {
+//        此接口要加入登录拦截
+        SysUser sysUser = UserThreadLocal.get();
+        /**
+         * 1.发布文章 目的 构建article对象
+         * 2.作者id 当前登录用户
+         * 3.标签 要将标签加入关联列表当中
+         * 4.
+         */
+        Article article = new Article();
+        article.setAuthorId(sysUser.getId());
+        article.setWeight(Article.Article_Common);
+        article.setViewCounts(0);
+        article.setSummary(articleParam.getSummary());
+        article.setCommentCounts(0);
+        article.setCreateDate(System.currentTimeMillis());
+        article.setCategoryId(articleParam.getCategory().getId());
+        this.articleMapper.insert(article);
+        List<TagVo> tags = articleParam.getTags();
+
+        if (tags != null){
+            for (TagVo tag : tags) {
+                Long articleId = article.getId();
+                ArticleTag articleTag = new ArticleTag();
+                articleTag.setTagId(tag.getId());
+                articleTag.setArticleId(articleId);
+                articleTagMapper.insert(articleTag);
+            }
+
+        }
+        //body
+        ArticleBody articleBody = new ArticleBody();
+        articleBody.setArticleId(article.getId());
+        articleBody.setContent(articleParam.getBody().getContent());
+        articleBody.setContentHtml(articleParam.getBody().getContentHtml());
+        articleBodyMapper.insert(articleBody);
+        article.setBodyId(articleBody.getId());
+        articleMapper.updateById(article);
+        HashMap<String, String> map = new HashMap<>();
+        map.put("id",article.getId().toString());
+        return Result.success(map);
+
     }
 
     private List<ArticleVo> copyList(List<Article> records,boolean isTag,boolean isAuthor) {
