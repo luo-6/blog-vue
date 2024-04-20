@@ -48,6 +48,9 @@ public class ArticleServiceImpl implements ArticleService {
          */
         Page<Article> page = new Page<>(pageParams.getPage(), pageParams.getPageSize());
         LambdaQueryWrapper<Article> queryWrapper = new LambdaQueryWrapper<>();
+        if (pageParams.getCategoryId() != null){
+            queryWrapper.eq(Article::getCategoryId,pageParams.getCategoryId());
+        }
 //        //是否置顶
         queryWrapper.orderByDesc(Article::getWeight,Article::getCreateDate);
         Page<Article> articlePage = articleMapper.selectPage(page,queryWrapper);
@@ -109,7 +112,6 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public Result publish(ArticleParam articleParam) {
-
 //        此接口要加入登录拦截
         SysUser sysUser = UserThreadLocal.get();
         /**
