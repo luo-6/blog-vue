@@ -141,6 +141,7 @@ public class ArticleServiceImpl implements ArticleService {
         article.setAuthorId(sysUser.getId());
         article.setWeight(Article.Article_Common);
         article.setViewCounts(0);
+        article.setTitle(articleParam.getTitle());
         article.setSummary(articleParam.getSummary());
         article.setComment_counts(0);
         article.setCreateDate(System.currentTimeMillis());
