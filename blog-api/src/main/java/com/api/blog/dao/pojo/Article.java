@@ -15,7 +15,7 @@ public class Article {
 
     private String summary;
 
-    private Integer commentCounts;
+    private Integer comment_counts;
 
     private Integer viewCounts;
 

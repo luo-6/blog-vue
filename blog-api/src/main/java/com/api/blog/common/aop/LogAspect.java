@@ -1,6 +1,7 @@
 package com.api.blog.common.aop;
 
 import com.alibaba.fastjson.JSON;
+
 import com.api.blog.utils.HttpContextUtils;
 import com.api.blog.utils.IpUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -12,28 +13,36 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
-
 import java.lang.reflect.Method;
 
-import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
-
+/**
+ * @Author ljm
+ * @Date 2021/10/18 21:01
+ * @Version 1.0
+ */
 @Component
-@Aspect//切面 通知和切点的关系
+@Aspect //切面 定义了通知和切点的关系
 @Slf4j
 public class LogAspect {
+
     @Pointcut("@annotation(com.api.blog.common.aop.LogAnnotation)")
-    public void pt(){}
+    public void pt(){
+    }
+
+    //环绕通知
     @Around("pt()")
-    public  Object log(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+    public Object log(ProceedingJoinPoint point) throws Throwable {
         long beginTime = System.currentTimeMillis();
         //执行方法
-        Object result = proceedingJoinPoint.proceed();
+        Object result = point.proceed();
         //执行时长(毫秒)
         long time = System.currentTimeMillis() - beginTime;
         //保存日志
-        recordLog(proceedingJoinPoint, time);
+        recordLog(point, time);
         return result;
+
     }
+
     private void recordLog(ProceedingJoinPoint joinPoint, long time) {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
@@ -60,4 +69,9 @@ public class LogAspect {
         log.info("excute time : {} ms",time);
         log.info("=====================log end================================");
     }
+
+
+
+
 }
+

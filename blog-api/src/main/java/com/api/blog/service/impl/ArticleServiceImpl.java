@@ -109,6 +109,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public Result publish(ArticleParam articleParam) {
+
 //        此接口要加入登录拦截
         SysUser sysUser = UserThreadLocal.get();
         /**
@@ -122,7 +123,7 @@ public class ArticleServiceImpl implements ArticleService {
         article.setWeight(Article.Article_Common);
         article.setViewCounts(0);
         article.setSummary(articleParam.getSummary());
-        article.setCommentCounts(0);
+        article.setComment_counts(0);
         article.setCreateDate(System.currentTimeMillis());
         article.setCategoryId(articleParam.getCategory().getId());
         this.articleMapper.insert(article);
