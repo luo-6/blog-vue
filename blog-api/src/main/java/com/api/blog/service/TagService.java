@@ -19,4 +19,6 @@ public interface TagService {
     Result findAll();
 
     Result findAllDetail();
+
+    Result findAllDetailById(Long id);
 }
