@@ -52,7 +52,7 @@ public class ArticleController {
     }
     @PostMapping("/listArchives")
 //    此接口用来记录日志
-    @LogAnnotation(module="文章",operator="文章获取列表")
+//    @LogAnnotation(module="文章",operator="文章获取列表")
     public Result listArchives() {
         return articleService.listArchives();
     }
