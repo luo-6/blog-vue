@@ -115,7 +115,6 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public Result listArchives() {
         List<Archives> archivesList = articleMapper.listArchives();
-        log.error("listArchives:{}",archivesList);
         return Result.success(archivesList);
     }
 
