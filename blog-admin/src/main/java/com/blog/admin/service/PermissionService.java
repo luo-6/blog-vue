@@ -10,6 +10,9 @@ import com.blog.admin.vo.Result;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
 public class PermissionService {
@@ -38,12 +41,10 @@ public class PermissionService {
         this.permissionMapper.insert(permission);
         return Result.success(null);
     }
-
     public Result update(Permission permission) {
         this.permissionMapper.updateById(permission);
         return Result.success(null);
     }
-
     public Result delete(Long id) {
         this.permissionMapper.deleteById(id);
         return Result.success(null);
