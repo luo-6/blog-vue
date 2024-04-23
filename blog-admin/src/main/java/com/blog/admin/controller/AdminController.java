@@ -30,4 +30,8 @@ public class AdminController {
     public Result delete(@PathVariable("id") Long id){
         return permissionService.delete(id);
     }
+    @GetMapping("/logout")
+    public Result loginOut(@PathVariable("id") Long id){
+        return null;
+    }
 }
