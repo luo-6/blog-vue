@@ -1,8 +1,11 @@
 package com.blog.admin.controller;
 
 import com.blog.admin.model.params.PageParam;
+import com.blog.admin.pojo.Admin;
 import com.blog.admin.pojo.Permission;
+import com.blog.admin.service.AuthService;
 import com.blog.admin.service.PermissionService;
+import com.blog.admin.service.SecurityUserService;
 import com.blog.admin.vo.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -29,9 +32,5 @@ public class AdminController {
     @GetMapping("permission/delete/{id}")
     public Result delete(@PathVariable("id") Long id){
         return permissionService.delete(id);
-    }
-    @GetMapping("/logout")
-    public Result loginOut(@PathVariable("id") Long id){
-        return null;
     }
 }
